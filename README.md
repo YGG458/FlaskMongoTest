@@ -5,9 +5,9 @@
 You can download docker at the following https://docs.docker.com/get-docker/
 Once you download and install it, open it and ensure it is running whenever you are developing your code.
 
-# Step 2: Clone this repo
+# Step 2: Clone this repo and set you MongoDBURI
 
-Clone this repo 
+Clone this repo and add 'MONGODB_URI'="YOUR_URI" to your computer's environment
 
 # Step 3: Run the container
 
