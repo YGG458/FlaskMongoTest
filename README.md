@@ -7,7 +7,7 @@ Once you download and install it, open it and ensure it is running whenever you 
 
 # Step 2: Clone this repo and set you MongoDBURI
 
-Clone this repo and set 'MONGODB_URI' ,'EMAIL_PASSWORD' and 'EMAIL_USERNAME'in your environment 
+Clone this repo and set 'MONGODB_URI' ,'EMAIL_PASSWORD' and 'EMAIL_USERNAME'in the dockercompose.yml
 
 # Step 3: Run the container
 
