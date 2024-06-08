@@ -5,13 +5,14 @@ from database import *
 from flask_cors import CORS
 from flask_mail import Mail,Message
 from api import api
+import os
 app = Flask(__name__)
 CORS(app)
 
 app.config['MAIL_SERVER']='smtp.163.com'   
 app.config['MAIL_PORT'] = 465      
-app.config['MAIL_USERNAME'] = 'G506404@163.com'  
-app.config['MAIL_PASSWORD'] = 'WPQVZCBSVQEKCHYE'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_USE_TLS'] = False    
 app.config['MAIL_USE_SSL'] = True   
 
