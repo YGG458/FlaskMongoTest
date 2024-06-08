@@ -2,3 +2,4 @@ backend/.idea
 backend/__pycache__
 backend/.venv
 frontend/node_modules
+docker-compose.yml
