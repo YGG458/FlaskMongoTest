@@ -7,7 +7,9 @@ services:
     environment: # environment variables required for flask
       - FLASK_ENV=development
       - FLASK_APP=app.py
-      - MONGODB_URI=mongodb+srv://guan:Aa123456@abandon.wga0hxr.mongodb.net/?retryWrites=true&w=majority&appName=Abandon
+      - MONGODB_URI=YOURURI
+      - EMAIL_USERNAME=YOURNAME
+      - EMAIL_PASSWORD=YOURCODE
     volumes:
       - ./backend:/app # similar to below, this means when we make flask changes, it reloads in container
     command: flask run --host=0.0.0.0 --reload # this overrides the CMD in the Dockerfile and runs flask
