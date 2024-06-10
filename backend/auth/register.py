@@ -2,12 +2,12 @@ from flask import request, jsonify
 from flask_bcrypt import Bcrypt
 import re
 from flask_mail import Message
-from api import api
+from auth import auth
 from datetime import datetime, timedelta
 
 bcrypt = Bcrypt()
 
-@api.route('register',methods=['post'])
+@auth.route('register',methods=['post'])
 def register(db,mail):
     User=db["UserInfo"]
     Temp=db["TempUser"]

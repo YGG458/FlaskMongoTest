@@ -1,10 +1,10 @@
 from flask import request, jsonify
 from flask_bcrypt import Bcrypt
-from api import api
+from auth import auth
 
 bcrypt = Bcrypt()
 
-@api.route('login', methods=['POST'])
+@auth.route('login', methods=['POST'])
 def login(db,mail):
     User=db['UserInfo']
     data = request.get_json()

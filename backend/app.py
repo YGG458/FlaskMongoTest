@@ -1,10 +1,8 @@
 from flask import Flask
 from database import *
-#from api.register import register_api
-#from api.login import login_api
 from flask_cors import CORS
 from flask_mail import Mail,Message
-from api import api
+from auth import auth
 import os
 app = Flask(__name__)
 CORS(app)
@@ -29,8 +27,11 @@ except Exception as e:
 
 #app.register_blueprint(register_api,url_prefix='/register',url_defaults={'UserCollection':Collection,'mail':mail})
 #app.register_blueprint(register_api,url_prefix='/register', url_defaults={'UserCollection':Collection})
-app.register_blueprint(api,url_prefix='/api', url_defaults={'db':db,'mail':mail})
+app.register_blueprint(auth,url_prefix='/auth', url_defaults={'db':db,'mail':mail})
+
+@app.route('/')
+def login():
+    return "You successfully connect to here!"
 
 if __name__ == '__main__':
-
-    app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True)

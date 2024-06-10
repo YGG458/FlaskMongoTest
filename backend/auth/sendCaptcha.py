@@ -2,12 +2,12 @@ from flask import request, jsonify
 from flask_bcrypt import Bcrypt
 import re
 from flask_mail import Message
-from api import api
+from auth import auth
 from datetime import datetime, timedelta
 import secrets
 bcrypt = Bcrypt()
 
-@api.route('sendcaptcha', methods=['POST'])
+@auth.route('sendcaptcha', methods=['POST'])
 def sendCaptcha(db,mail):
     Temp=db["TempUser"]
     User=db["UserInfo"]
