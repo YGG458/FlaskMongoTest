@@ -4,11 +4,11 @@ import re
 from flask_mail import Message
 from auth import auth
 from datetime import datetime, timedelta
-
+from database import db
 bcrypt = Bcrypt()
 
 @auth.route('register',methods=['post'])
-def register(db,mail):
+def register():
     User=db["UserInfo"]
     Temp=db["TempUser"]
     data = request.get_json()

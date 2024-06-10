@@ -5,10 +5,12 @@ from flask_mail import Message
 from auth import auth
 from datetime import datetime, timedelta
 import secrets
+from database import db
+from mail import mail
 bcrypt = Bcrypt()
 
 @auth.route('sendcaptcha', methods=['POST'])
-def sendCaptcha(db,mail):
+def sendCaptcha():
     Temp=db["TempUser"]
     User=db["UserInfo"]
     data = request.get_json()
