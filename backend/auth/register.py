@@ -45,7 +45,7 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     # Insert new user into the database
-    User.insert_one({'username': data['username'], 'password': hashed_password,'mail':data['mail'].lower()})
+    User.insert_one({'username': data['username'], 'password': hashed_password,'mail':data['mail'].lower(),'role':'student'})
     Temp.delete_one({'mail':data['mail'].lower()})
     return jsonify({'message': 'User registered successfully'}), 201
     
