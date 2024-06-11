@@ -26,30 +26,30 @@ def sendCaptcha():
         return jsonify({'message': 'Username must be between 2 and 16 characters long'}), 400
     if not validate_password(data['password']):
         return jsonify({'message': 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and be no longer than 12 characters'}), 400
-    if not is_valid_email(data['mail']):
+    if not is_valid_email(data['mail'].lower()):
         return jsonify({'message': 'Please enter a valid email address'}), 400
     if data['passwordConfirm']!=data['password']:
         return jsonify({'message': 'Please confirm the two passwords you enter is same'}), 400
     if User.find_one({'username': data['username']}):
         return jsonify({'message': 'This username is already registered'}), 400
-    if User.find_one({'mail': data['mail']}):
+    if User.find_one({'mail': data['mail'].lower()}):
         return jsonify({'message': 'This email is already registered'}), 400
-    Email=data['mail']
-    InTemp=Temp.find_one({'mail': data['mail']})
+    Email=data['mail'].lower()
+    InTemp=Temp.find_one({'mail': data['mail'].lower()})
     if InTemp:
         if outOfTime(InTemp):
             return jsonify({'message': 'Please don’t send too frequently！You can just send once in 30s'}), 429
         else:
             newCode=secrets.token_hex(3)
             newTime=datetime.now()
-            SendMail(mail,newTime,newCode,data['mail'])
-            Temp.update_one({'mail': data['mail']}, {'$set': {'lastTime': newTime,'code':newCode}})
+            SendMail(mail,newTime,newCode,data['mail'].lower())
+            Temp.update_one({'mail': data['mail'].lower()}, {'$set': {'lastTime': newTime,'code':newCode}})
             
             return jsonify({'message': f"CAPTCHA was sent to {Email} successfully! Please check your mail box!"}), 201
     newCode=secrets.token_hex(3)
     newTime=datetime.now()
     SendMail(mail,newTime,newCode,data['mail'])
-    Temp.insert_one({'mail': data['mail'],'lastTime': newTime,'code':newCode})
+    Temp.insert_one({'mail': data['mail'].lower(),'lastTime': newTime,'code':newCode})
     return jsonify({'message': f'CAPTCHA was sent to {Email} successfully! Please check your mail box!'}), 201
 def SendMail(mail,time,code,recipent):
     msg = Message('Your CAPTCHA', sender = 'G506404@163.com' , recipients = [recipent])

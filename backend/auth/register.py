@@ -26,15 +26,15 @@ def register():
         return jsonify({'message': 'Username must be between 2 and 16 characters long'}), 400
     if not validate_password(data['password']):
         return jsonify({'message': 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and be no longer than 12 characters'}), 400
-    if not is_valid_email(data['mail']):
+    if not is_valid_email(data['mail'].lower()):
         return jsonify({'message': 'Please enter a valid email address'}), 400
     if data['passwordConfirm']!=data['password']:
         return jsonify({'message': 'Please confirm the two passwords you enter is same'}), 400
     if User.find_one({'username': data['username']}):
         return jsonify({'message': 'This username is already registered'}), 400
-    if User.find_one({'mail': data['mail']}):
+    if User.find_one({'mail': data['mail'].lower()}):
         return jsonify({'message': 'This email is already registered'}), 400
-    TempUser=Temp.find_one({'mail': data['mail']})
+    TempUser=Temp.find_one({'mail': data['mail'].lower()})
     if not TempUser:
         return jsonify({'message': 'This email is not the one you just enter!'}), 400
     
@@ -45,8 +45,8 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     # Insert new user into the database
-    User.insert_one({'username': data['username'], 'password': hashed_password,'mail':data['mail']})
-    Temp.delete_one({'mail':data['mail']})
+    User.insert_one({'username': data['username'], 'password': hashed_password,'mail':data['mail'].lower()})
+    Temp.delete_one({'mail':data['mail'].lower()})
     return jsonify({'message': 'User registered successfully'}), 201
     
 

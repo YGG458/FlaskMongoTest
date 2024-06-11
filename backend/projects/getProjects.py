@@ -2,7 +2,7 @@ from flask import request, jsonify
 from projects import projects
 
 
-@projects.route('/',method=['GET'])
+@projects.route('/',methods=['GET'])
 def showProjects(): #show all projects list
     if True:
         return jsonify({'message': 'project list'}), 200

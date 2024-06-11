@@ -1,5 +1,5 @@
 from flask import Blueprint
 projects=Blueprint('projects',__name__)
 
-from . import login,register,sendCaptcha
+from . import addProjects,deleteProjects,editProjects,getProjects
 
