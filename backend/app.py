@@ -4,6 +4,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from flask_mail import Mail,Message
 from auth import auth
+from courses import courses
 import os
 app = Flask(__name__)
 CORS(app)
@@ -15,19 +16,8 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True   
 mail = Mail(app)    
 
-# my_client=get_client()
-# db =  get_database(my_client)S
-# Collection = get_collection(db,'UserInfo')   
-# try:
-#     db.admin.command('ping')
-#     print("Pinged your deployment. You successfully connected to MongoDB!")
-# except Exception as e:
-#     print(e)     
-
-#app.register_blueprint(register_api,url_prefix='/register',url_defaults={'UserCollection':Collection,'mail':mail})
-#app.register_blueprint(register_api,url_prefix='/register', url_defaults={'UserCollection':Collection})
-app.register_blueprint(auth,url_prefix='/auth') #url_defaults={'mail':mail})
-
+app.register_blueprint(auth,url_prefix='/auth')
+app.register_blueprint(courses,url_prefix='/courses')
 @app.route('/')
 def login():
     return "You successfully connect to here!"
