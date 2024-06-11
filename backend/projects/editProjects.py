@@ -1,8 +1,8 @@
 from flask import request, jsonify
 from projects import projects
 
-@projects.route('/add',method=['POST'])
-def addProjects():
+@projects.route('/edit',method=['PUT'])
+def putProjects():
     if True:
         return jsonify({'message': 'Project(s) add successful'}), 200
     else:
