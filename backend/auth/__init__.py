@@ -1,5 +1,5 @@
 from flask import Blueprint
 auth=Blueprint('auth',__name__)
 
-from . import login,register,sendCaptcha
+from . import login,register,sendCaptcha,logout,resetConfirm,resetpassword,rolechange,testregister
 

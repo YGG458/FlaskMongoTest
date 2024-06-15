@@ -22,7 +22,7 @@ def login():
 
     # Check if the password is correct
     if bcrypt.check_password_hash(existing_user['password'], data['password']):
-        user_identity={'mail': existing_user['mail'], 'role': existing_user['role']}
+        user_identity={'username':existing_user['username'],'mail': existing_user['mail'], 'role': existing_user['role']}
         access_token = create_access_token(identity = user_identity)
         session['user'] = existing_user['mail']
         return jsonify({'message': 'Login successful', 'access_token': access_token}), 200

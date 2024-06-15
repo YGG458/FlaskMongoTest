@@ -7,36 +7,30 @@ from datetime import datetime, timedelta
 from database import db
 bcrypt = Bcrypt()
 
-@auth.route('register',methods=['post'])
-def register():
+@auth.route('resetconfirm',methods=['PUT'])
+def resetConfirm():
     User=db["UserInfo"]
     Temp=db["TempUser"]
     data = request.get_json()
     if not data:
         return jsonify({'message': 'Username and password are required'}), 400
-    if not data['username']:
-        return jsonify({'message': 'Username are required'}), 400
     if not data['password']:
         return jsonify({'message': 'Password are required'}), 400
     if not data['passwordConfirm'] :
         return jsonify({'message': 'Please enter your password twice'}), 400
     if not data['mail']:
         return jsonify({'message': 'Please enter your email!'}), 400
-    if not validate_username(data['username']):
-        return jsonify({'message': 'Username must be between 2 and 16 characters long'}), 400
     if not validate_password(data['password']):
         return jsonify({'message': 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and be no longer than 12 characters'}), 400
     if not is_valid_email(data['mail'].lower()):
         return jsonify({'message': 'Please enter a valid email address'}), 400
     if data['passwordConfirm']!=data['password']:
         return jsonify({'message': 'Please confirm the two passwords you enter is same'}), 400
-    if User.find_one({'username': data['username']}):
-        return jsonify({'message': 'This username is already registered'}), 400
-    if User.find_one({'mail': data['mail'].lower()}):
-        return jsonify({'message': 'This email is already registered'}), 400
     TempUser=Temp.find_one({'mail': data['mail'].lower()})
+    if not User.find_one({"mail":data["mail"]}):
+        return jsonify({'message': 'This email did not register!'}), 400
     if not TempUser:
-        return jsonify({'message': 'This email is not the one you just enter!'}), 400
+        return jsonify({'message': 'You need to send a captcha first!'}), 400
     
     if datetime.now()>TempUser['lastTime']+timedelta(minutes=5):
         return jsonify({'message': 'This CAPTCHA is already Expired! Please retry!'}), 400
@@ -45,10 +39,10 @@ def register():
     # Hash the password
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     # Insert new user into the database
-    User.insert_one({'username': data['username'], 'password': hashed_password,'mail':data['mail'].lower(),'role':'student'})
     
+    User.update_one({'mail':data['mail'].lower()}, {'$set': {'password':hashed_password}})
     Temp.delete_one({'mail':data['mail'].lower()})
-    return jsonify({'message': 'User registered successfully'}), 201
+    return jsonify({'message': 'Password reset successfully'}), 200
     
 
 

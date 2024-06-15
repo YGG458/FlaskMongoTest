@@ -4,53 +4,63 @@ import re
 from flask_mail import Message
 from auth import auth
 from datetime import datetime, timedelta
+import secrets
 from database import db
+from mail import mail
 bcrypt = Bcrypt()
 
-@auth.route('register',methods=['post'])
-def register():
-    User=db["UserInfo"]
+@auth.route('resetpassword', methods=['POST'])
+def resetpassword():
     Temp=db["TempUser"]
+    User=db["UserInfo"]
     data = request.get_json()
-    if not data:
-        return jsonify({'message': 'Username and password are required'}), 400
-    if not data['username']:
-        return jsonify({'message': 'Username are required'}), 400
     if not data['password']:
         return jsonify({'message': 'Password are required'}), 400
     if not data['passwordConfirm'] :
         return jsonify({'message': 'Please enter your password twice'}), 400
     if not data['mail']:
         return jsonify({'message': 'Please enter your email!'}), 400
-    if not validate_username(data['username']):
-        return jsonify({'message': 'Username must be between 2 and 16 characters long'}), 400
     if not validate_password(data['password']):
         return jsonify({'message': 'Password must contain at least one uppercase letter, one lowercase letter, one digit, and be no longer than 12 characters'}), 400
     if not is_valid_email(data['mail'].lower()):
         return jsonify({'message': 'Please enter a valid email address'}), 400
     if data['passwordConfirm']!=data['password']:
         return jsonify({'message': 'Please confirm the two passwords you enter is same'}), 400
-    if User.find_one({'username': data['username']}):
-        return jsonify({'message': 'This username is already registered'}), 400
-    if User.find_one({'mail': data['mail'].lower()}):
-        return jsonify({'message': 'This email is already registered'}), 400
-    TempUser=Temp.find_one({'mail': data['mail'].lower()})
-    if not TempUser:
-        return jsonify({'message': 'This email is not the one you just enter!'}), 400
-    
-    if datetime.now()>TempUser['lastTime']+timedelta(minutes=5):
-        return jsonify({'message': 'This CAPTCHA is already Expired! Please retry!'}), 400
-    if TempUser['code']!=data['code']:
-        return jsonify({'message': 'You should enter the correct CAPTCHA! Please retry!'}), 400
-    # Hash the password
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    # Insert new user into the database
-    User.insert_one({'username': data['username'], 'password': hashed_password,'mail':data['mail'].lower(),'role':'student'})
-    
-    Temp.delete_one({'mail':data['mail'].lower()})
-    return jsonify({'message': 'User registered successfully'}), 201
-    
+    Email=data['mail'].lower()
+    CurrentUser=User.find_one({'mail':Email})
+    if CurrentUser:
+        InTemp=Temp.find_one({'mail': Email})
+        if InTemp:
+            if outOfTime(InTemp):
+                return jsonify({'message': 'Please don’t send too frequently！You can just send once in 30s'}), 429
+            else:
+                newCode=secrets.token_hex(3)
+                newTime=datetime.now()
+                SendMail(mail,newTime,newCode,data['mail'].lower())
+                Temp.update_one({'mail': Email}, {'$set': {'lastTime': newTime,'code':newCode}})
+                
+                return jsonify({'message': f"CAPTCHA was sent to {Email} successfully! Please check your mail box!"}), 201
+        newCode=secrets.token_hex(3)
+        newTime=datetime.now()
+        SendMail(mail,newTime,newCode,data['mail'])
+        Temp.insert_one({'mail': Email,'lastTime': newTime,'code':newCode})
+        return jsonify({'message': f'CAPTCHA was sent to {Email} successfully! Please check your mail box!'}), 201
+    else:
+        return jsonify({'message': 'This email is not yet registered'}), 400
+def SendMail(mail,time,code,recipent):
+    msg = Message('Your CAPTCHA', sender = 'G506404@163.com' , recipients = [recipent])
+    msg.body = f'''
+        Hello,THIS IS YOUR CAPTHA:
+                {code}
+        It is valid before {time+timedelta(minutes=5)} !
+    '''
+    success = mail.send(msg)
 
+    if success:
+        return True
+    else:
+        return False
+    
 
 def validate_password(password):
 
@@ -73,9 +83,8 @@ def outOfTime(InTemp):
     last_time=InTemp['lastTime']
     time=datetime.now()-last_time
     if  time < timedelta(seconds=30):
-        return False
-    return True
-
+        return True
+    return False
 
 def is_valid_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
