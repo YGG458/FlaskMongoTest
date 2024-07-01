@@ -1,0 +1,28 @@
+
+class User:
+    def __init__(self, username, email, password, role, profile=None):
+        self.username = username
+        self.email = email
+        self.password = password
+        self.role = role
+        self.profile = profile
+
+class Course:
+    def __init__(self, course_name, course_code, course_outline, data_source):
+        self.course_name = course_name
+        self.course_code = course_code
+        self.course_outline = course_outline
+        self.data_source = data_source
+        self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
+
+class Project:
+    def __init__(self, title, scope, requirements, skills, knowledge_areas, expected_outcomes):
+        self.title = title
+        self.scope = scope
+        self.requirements = requirements
+        self.skills = skills
+        self.knowledge_areas = knowledge_areas
+        self.expected_outcomes = expected_outcomes
+        self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
