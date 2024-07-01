@@ -15,6 +15,7 @@ from jwt_utils import init_jwt
 from admin import admin
 app = Flask(__name__)
 CORS(app)
+
 app.config['MAIL_SERVER']='smtp.163.com'   
 app.config['MAIL_PORT'] = 465      
 app.config['MAIL_USERNAME'] = os.getenv('EMAIL_USERNAME')
@@ -38,6 +39,7 @@ app.register_blueprint(dashboard,url_prefix='/dashboard')
 app.register_blueprint(courses,url_prefix='/courses')
 app.register_blueprint(projects,url_prefix='/projects')
 app.register_blueprint(admin,url_prefix='/admin')
+
 @app.route('/')
 def login():
     return "You successfully connect to here!"

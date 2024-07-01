@@ -51,6 +51,7 @@ def sendCaptcha():
     SendMail(mail,newTime,newCode,data['mail'])
     Temp.insert_one({'mail': data['mail'].lower(),'lastTime': newTime,'code':newCode})
     return jsonify({'message': f'CAPTCHA was sent to {Email} successfully! Please check your mail box!'}), 201
+
 def SendMail(mail,time,code,recipent):
     msg = Message('Your CAPTCHA', sender = 'G506404@163.com' , recipients = [recipent])
     msg.body = f'''
