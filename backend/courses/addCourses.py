@@ -288,3 +288,16 @@ def delete_course(course_id):
     return jsonify({'message': 'Course deleted successfully.'}), 200
 
 # 其他课程相关的端点
+@courses.route('/delete/<course_id>', methods=['DELETE'])
+@jwt_required()
+def delete_course(course_id):
+    current_user = get_jwt_identity()
+
+    # 检查用户权限
+    if current_user['role'] != 'admin':
+        return jsonify({'message': 'Unauthorized. Only admin users can delete courses.'}), 403
+
+    # 在这里实现删除课程的逻辑
+    return jsonify({'message': 'Course deleted successfully.'}), 200
+
+# 其他课程相关的端点
